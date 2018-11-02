@@ -5,18 +5,24 @@ import (
 	"time"
 )
 
+type Fibonacci struct {
+	num    int
+	answer int
+}
+
+func (fib Fibonacci) run() {
+
+}
+
 func main() {
 	go spinner(100 * time.Millisecond)
-	go spinner(100 * time.Millisecond)
 	const n = 45
-	fibN := fib(n) //slow
+	fibN := fib(n)
 	fmt.Printf("\rFibonacci(%d) = %d\n", n, fibN)
 }
 
 func spinner(delay time.Duration) {
-	fmt.Println()
 	for {
-
 		for _, r := range `-\|/` {
 			fmt.Printf("\r%c", r)
 			time.Sleep(delay)
@@ -29,4 +35,8 @@ func fib(x int) int {
 		return x
 	}
 	return fib(x-1) + fib(x-2)
+}
+
+func run() {
+
 }
