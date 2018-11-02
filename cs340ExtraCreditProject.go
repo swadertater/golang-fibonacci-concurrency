@@ -5,18 +5,28 @@ import (
 	"time"
 )
 
-func f(n int) {
-	for i := 0; i < 10; i++ {
-		fmt.Println(n, ":", i)
-		amt := time.Duration(Rand.Intn(250))
-		time.Sleep(time.Millisecond * amt)
+func main() {
+	go spinner(100 * time.Millisecond)
+	go spinner(100 * time.Millisecond)
+	const n = 45
+	fibN := fib(n) //slow
+	fmt.Printf("\rFibonacci(%d) = %d\n", n, fibN)
+}
+
+func spinner(delay time.Duration) {
+	fmt.Println()
+	for {
+
+		for _, r := range `-\|/` {
+			fmt.Printf("\r%c", r)
+			time.Sleep(delay)
+		}
 	}
 }
 
-func main() {
-	go f(1)
-	go f(2)
-	go f(3)
-	var input string
-	fmt.Scanln(&input)
+func fib(x int) int {
+	if x < 2 {
+		return x
+	}
+	return fib(x-1) + fib(x-2)
 }
