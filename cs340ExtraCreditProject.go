@@ -2,47 +2,57 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"sync"
 )
-
-func fib(n float64) float64 {
-	if n < 2 {
-		return n
-	}
-	return fib(n-1) + fib(n-2)
-}
 
 type Fibonacci struct {
 	num    float64
 	answer float64
 }
 
-func (f Fibonacci) run() {
+func newFibonacci(n float64) *Fibonacci {
+
+	f := new(Fibonacci)
+	f.num = n
+	c1 := make(chan float64)
+	c2 := make(chan float64)
+
 	if f.num <= 1 {
-		f.answer = f.num
+		f.answer = n
 	} else {
-		var fib1 Fibonacci
-		fib1.num = f.num - 1
-		var fib2 Fibonacci
-		fib2.num = f.num - 2
-		go fib(fib2.num)
-		f.answer = fib1.answer + fib2.answer
+		var wg sync.WaitGroup
+		wg.Add(2)
+		go func() {
+			fib1 := newFibonacci(n - 1)
+			fmt.Println(fib1.answer)
+			c1 <- fib1.answer
+			wg.Done()
+		}()
+		go func() {
+			fib2 := newFibonacci(n - 2)
+			fmt.Println(fib2.answer)
+			c2 <- fib2.answer
+			wg.Done()
+		}()
+		wg.Wait()
+		f.answer = <-c2 + <-c1
 	}
+	close(c1)
+	close(c2)
+
+	return f
 }
 
 func main() {
-	go spinner(100 * time.Millisecond)
-	const n = 45
-	fibN := 12
-	fmt.Printf("\rFibonacci(%d) = %d\n", n, fibN)
+	var n float64 = 4
+	f := newFibonacci(n)
+	fmt.Println(f.answer)
 
 }
 
-func spinner(delay time.Duration) {
-	for {
-		for _, r := range `-\|/` {
-			fmt.Printf("\r%c", r)
-			time.Sleep(delay)
-		}
+func fib(n float64) float64 {
+	if n < 2 {
+		return n
 	}
+	return fib(n-1) + fib(n-2)
 }
