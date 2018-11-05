@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"sync"
+	"time"
 )
 
 type Fibonacci struct {
@@ -20,21 +20,15 @@ func newFibonacci(n float64) *Fibonacci {
 	if f.num <= 1 {
 		f.answer = n
 	} else {
-		var wg sync.WaitGroup
-		wg.Add(2)
 		go func() {
 			fib1 := newFibonacci(n - 1)
-			fmt.Println(fib1.answer)
-			c1 <- fib1.answer
-			wg.Done()
+			c2 <- fib1.answer
 		}()
 		go func() {
 			fib2 := newFibonacci(n - 2)
-			fmt.Println(fib2.answer)
-			c2 <- fib2.answer
-			wg.Done()
+			c1 <- fib2.answer	
 		}()
-		wg.Wait()
+		
 		f.answer = <-c2 + <-c1
 	}
 	close(c1)
@@ -44,10 +38,18 @@ func newFibonacci(n float64) *Fibonacci {
 }
 
 func main() {
-	var n float64 = 4
-	f := newFibonacci(n)
-	fmt.Println(f.answer)
 
+	numbers := []float64{30, 35, 36, 37, 38, 39, 40}
+	for _, value := range numbers{
+		start := time.Now()
+		fmt.Println("getting the ", value, " fibonacci number")
+		f := newFibonacci(value)
+		fmt.Println(f.answer)
+		end := time.Now()
+		totalTime := end.Sub(start)
+		fmt.Println("Fibonacci number: ", value, " took ", totalTime, "\n")
+	}
+	
 }
 
 func fib(n float64) float64 {
