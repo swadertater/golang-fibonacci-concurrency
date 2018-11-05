@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"time"
+	"runtime"
 )
 
 type Fibonacci struct {
 	num    float64
 	answer float64
+	
 }
 
 func newFibonacci(n float64) *Fibonacci {
@@ -37,9 +39,23 @@ func newFibonacci(n float64) *Fibonacci {
 	return f
 }
 
-func main() {
+func worker(id int, jobs <-chan int, results chan<- int) {
+	for j := range jobs {
+		fmt.Println("worker", id, "processing job", j)
+		time.Sleep(time.Second)
+		results <- j * 2
+	}
+}
 
+func main() {
 	numbers := []float64{30, 35, 36, 37, 38, 39, 40}
+	numProcessors := runtime.NumCPU
+	for w := 0; w  numProcessors; w++{
+		worker(w)
+	}
+
+	
+	
 	for _, value := range numbers{
 		start := time.Now()
 		fmt.Println("getting the ", value, " fibonacci number")
