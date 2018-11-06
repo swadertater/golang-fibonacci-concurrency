@@ -48,7 +48,7 @@ func worker(id int, jobs <-chan int, results chan<- int) {
 }
 
 func main() {
-	numbers := []float64{1, 2, 3, 4, 5, 6, 10, 14 ,18 ,20, 21, 22, 23, 24, 25, 30, 35, 36, 37, 38, 39, 40}
+	numbers := []float64{1, 2, 3, 4, 5, 6, 10, 14 ,18 ,20, 21, 22, 23, 24, 25, 30, 31, 32}
 	
 
 	for _, value := range numbers{
