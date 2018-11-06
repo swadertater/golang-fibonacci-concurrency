@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"time"
-	//"runtime"
 )
 
 type Fibonacci struct {
